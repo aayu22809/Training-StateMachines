@@ -1,16 +1,14 @@
 package frc.robot.systems;
 
 // WPILib Imports
-
-// Third party Hardware Imports
-import com.revrobotics.CANSparkMax;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 // Robot Imports
 import frc.robot.TeleopInput;
 import frc.robot.HardwareMap;
 import frc.robot.systems.AutoHandlerSystem.AutoFSMState;
 
-public class FSMSystem {
+public class TrafficLightSystem {
 	/* ======================== Constants ======================== */
 	// FSM state definitions
 	public enum FSMState {
@@ -18,14 +16,13 @@ public class FSMSystem {
 		OTHER_STATE
 	}
 
-	private static final float MOTOR_RUN_POWER = 0.1f;
 
 	/* ======================== Private variables ======================== */
 	private FSMState currentState;
 
 	// Hardware devices should be owned by one and only one system. They must
 	// be private to their owner system and may not be used elsewhere.
-	private CANSparkMax exampleMotor;
+	private DigitalInput crosswalkButton;
 
 	/* ======================== Constructor ======================== */
 	/**
@@ -33,10 +30,9 @@ public class FSMSystem {
 	 * one-time initialization or configuration of hardware required. Note
 	 * the constructor is called only once when the robot boots.
 	 */
-	public FSMSystem() {
+	public TrafficLightSystem() {
 		// Perform hardware init
-		exampleMotor = new CANSparkMax(HardwareMap.CAN_ID_SPARK_SHOOTER,
-										CANSparkMax.MotorType.kBrushless);
+		crosswalkButton = new DigitalInput(HardwareMap.DIO_CROSSWALK_BUTTON_CHANNEL);
 
 		// Reset state machine
 		reset();
@@ -93,16 +89,8 @@ public class FSMSystem {
 	 * @return if the action carried out in this state has finished executing
 	 */
 	public boolean updateAutonomous(AutoFSMState autoState) {
-		switch (autoState) {
-			case STATE1:
-				return handleAutoState1();
-			case STATE2:
-				return handleAutoState2();
-			case STATE3:
-				return handleAutoState3();
-			default:
-				return true;
-		}
+		update(null);
+		return false;
 	}
 
 	/* ======================== Private methods ======================== */
@@ -139,7 +127,7 @@ public class FSMSystem {
 	 *        the robot is in autonomous mode.
 	 */
 	private void handleStartState(TeleopInput input) {
-		exampleMotor.set(0);
+		
 	}
 	/**
 	 * Handle behavior in OTHER_STATE.
@@ -147,7 +135,7 @@ public class FSMSystem {
 	 *        the robot is in autonomous mode.
 	 */
 	private void handleOtherState(TeleopInput input) {
-		exampleMotor.set(MOTOR_RUN_POWER);
+
 	}
 
 	/**

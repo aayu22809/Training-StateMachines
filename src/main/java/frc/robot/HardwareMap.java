@@ -7,16 +7,20 @@ import edu.wpi.first.wpilibj.DigitalInput;
  * configuration of the robot.
  */
 public final class HardwareMap {
-	// ID numbers for devices on the CAN bus
-	public static final int CAN_ID_SPARK_DRIVE_FRONT_RIGHT = 1;
-	public static final int CAN_ID_SPARK_DRIVE_BACK_RIGHT = 2;
-	public static final int CAN_ID_SPARK_DRIVE_FRONT_LEFT = 3;
-	public static final int CAN_ID_SPARK_DRIVE_BACK_LEFT = 4;
-	public static final int CAN_ID_SPARK_SHOOTER = 5;
+	// Crosswalk button
+	public static final int DIO_CROSSWALK_BUTTON_CHANNEL = 1;
 
-	// Pneumatics channel numbers
-	public static final int PCM_CHANNEL_INTAKE_CYLINDER_FORWARD = 1;
-	public static final int PCM_CHANNEL_INTAKE_CYLINDER_REVERSE = 2;
+	// Addressable LED
+	public static final int PWM_ADDRESSABLE_LED_CHANNEL = 9;
+
+	public final class LEDStripIndex {
+		public static final int RED_LIGHT = 4;
+		public static final int YELLOW_LIGHT = 3;
+		public static final int GREEN_LIGHT = 2;
+
+		public static final int WALK_SIGN = 1;
+		public static final int HAND_SIGN = 0;
+	}
 
 	// Place jumper from DIO pin 9 to GND to indicate this is a test setup
 	private static final int DIO_TEST_SETUP_CHANNEL = 9;
