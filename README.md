@@ -62,5 +62,5 @@ Next, switch the simulation to teleop and press the button a few times. Notice h
 
 AdvantageScope and SmartDashboard provide a very powerful way to visualize the robot's behavior in real time.
 
-> [!ALERT]
+> [!WARNING]
 > For this exercise, let's only use SmartDashboard for debugging. Do not add any `println` in your code.
