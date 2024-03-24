@@ -28,6 +28,9 @@ stateDiagram-v2
   RED_LIGHT_STATE --> GREEN_LIGHT_STATE: Timer > 5 seconds
 ```
 
+> [!NOTE]
+> If the state diagram is not showing up for you, install the [Markdown Preview Mermaid Support](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid) extension in VSCode.
+
 ## Hardware Definition
 
 The hardware definitions have already been completed for you in `HardwareMap.java`. Notice that we have a button connected to a digital input that will represent the crosswalk request button. This is a normally open button, so the input will read high (true) when the button is not preseed, and low (false) when the button is pressed. All of the lights in the traffic light are wired as a signal addressable LED strip. The LED strip is controlled from a PWM port on the RoboRIO. Please open up `HardwareMap.java` and verify your button and addressable LED strip connections match the values defined in our code.
