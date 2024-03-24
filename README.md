@@ -8,7 +8,7 @@ After this lesson you should known how to:
 * Use [Timer](https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/Timer.html) to track time
 * Read switches with [DigitalInput](https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/DigitalInput.html)
 * Control LED strips with [AddressableLED](https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/AddressableLED.html) and [AddressableLEDBuffer](https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/AddressableLEDBuffer.html)
-* Post debug information to [NetworkTables](https://docs.wpilib.org/en/stable/docs/software/networktables/index.html)
+* Post debug information to [SmartDashboard](https://docs.wpilib.org/en/stable/docs/software/dashboards/smartdashboard/displaying-expressions.html) and view it with [AdvantageScope](https://docs.wpilib.org/en/stable/docs/software/dashboards/advantagescope.html).
 
 ## Introduction
 
@@ -60,4 +60,7 @@ Once the simulation has started, you should see a set of values appear in the le
 
 Next, switch the simulation to teleop and press the button a few times. Notice how in AdvantageScope we can see the values update in real time, as well as the internal state of our `TrafficLightSystem`. Try using double click in the timeline view to measure how long we are staying in `RED_LIGHT_STATE`.
 
-AdvantageScope and SmartDashboard provide a very powerful way to visualize the robot's behavior in real time. For this exercise, let's only using SmartDashboard for debugging. Do not add any `println` in your code.
+AdvantageScope and SmartDashboard provide a very powerful way to visualize the robot's behavior in real time.
+
+> [!ALERT]
+> For this exercise, let's only use SmartDashboard for debugging. Do not add any `println` in your code.
