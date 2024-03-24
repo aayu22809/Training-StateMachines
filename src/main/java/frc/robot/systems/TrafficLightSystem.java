@@ -107,6 +107,7 @@ public class TrafficLightSystem {
 		// Publish current state for debugging
 		SmartDashboard.putString("Traffic Light State", currentState.toString());
 		SmartDashboard.putBoolean("Button", crosswalkButton.get());
+		SmartDashboard.putNumber("Timer", timer.get());
 	}
 
 	/**
