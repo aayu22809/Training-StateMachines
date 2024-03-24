@@ -12,6 +12,7 @@ public final class HardwareMap {
 
 	// Addressable LED
 	public static final int PWM_ADDRESSABLE_LED_CHANNEL = 9;
+	public static final int ADDRESSABLE_LED_COUNT = 5;
 
 	public final class LEDStripIndex {
 		public static final int RED_LIGHT = 4;

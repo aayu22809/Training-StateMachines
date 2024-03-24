@@ -1,8 +1,11 @@
 package frc.robot.systems;
 
 // WPILib Imports
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.DigitalInput;
-
+import edu.wpi.first.wpilibj.Timer;
 // Robot Imports
 import frc.robot.TeleopInput;
 import frc.robot.HardwareMap;
@@ -12,17 +15,22 @@ public class TrafficLightSystem {
 	/* ======================== Constants ======================== */
 	// FSM state definitions
 	public enum FSMState {
-		START_STATE,
-		OTHER_STATE
+		GREEN_LIGHT_STATE,
+		RED_LIGHT_STATE
 	}
 
+	// How long to keep the red light on before resetting to green
+	private double RED_LIGHT_TIME_SEC = 5.0;
 
 	/* ======================== Private variables ======================== */
 	private FSMState currentState;
+	private Timer timer;
 
 	// Hardware devices should be owned by one and only one system. They must
 	// be private to their owner system and may not be used elsewhere.
-	private DigitalInput crosswalkButton;
+	private DigitalInput crosswalkButton; // Normally open button. This means input is high when button is not pressed.
+	private AddressableLED ledStrip;
+	private AddressableLEDBuffer ledBuffer;
 
 	/* ======================== Constructor ======================== */
 	/**
@@ -33,6 +41,14 @@ public class TrafficLightSystem {
 	public TrafficLightSystem() {
 		// Perform hardware init
 		crosswalkButton = new DigitalInput(HardwareMap.DIO_CROSSWALK_BUTTON_CHANNEL);
+
+		ledStrip = new AddressableLED(HardwareMap.PWM_ADDRESSABLE_LED_CHANNEL);
+		ledBuffer = new AddressableLEDBuffer(HardwareMap.ADDRESSABLE_LED_COUNT);
+		ledStrip.setLength(ledBuffer.getLength());
+		ledStrip.setData(ledBuffer);
+		ledStrip.start();
+
+		timer = new Timer();
 
 		// Reset state machine
 		reset();
@@ -55,7 +71,10 @@ public class TrafficLightSystem {
 	 * Ex. if the robot is enabled, disabled, then reenabled.
 	 */
 	public void reset() {
-		currentState = FSMState.START_STATE;
+		currentState = FSMState.GREEN_LIGHT_STATE;
+
+		timer.stop();
+		timer.reset();
 
 		// Call one tick of update to ensure outputs reflect start state
 		update(null);
@@ -69,12 +88,12 @@ public class TrafficLightSystem {
 	 */
 	public void update(TeleopInput input) {
 		switch (currentState) {
-			case START_STATE:
-				handleStartState(input);
+			case GREEN_LIGHT_STATE:
+				handleGreenLightState(input);
 				break;
 
-			case OTHER_STATE:
-				handleOtherState(input);
+			case RED_LIGHT_STATE:
+				handleRedLightState(input);
 				break;
 
 			default:
@@ -104,16 +123,27 @@ public class TrafficLightSystem {
 	 * @return FSM state for the next iteration
 	 */
 	private FSMState nextState(TeleopInput input) {
+		// Stay in start state until input is available
+		if (input == null) {
+			return FSMState.GREEN_LIGHT_STATE;
+		}
 		switch (currentState) {
-			case START_STATE:
-				if (input != null) {
-					return FSMState.OTHER_STATE;
+			case GREEN_LIGHT_STATE:
+				if (!crosswalkButton.get()) {
+					// Start timer tracking how long red light is on
+					timer.restart();
+					return FSMState.RED_LIGHT_STATE;
 				} else {
-					return FSMState.START_STATE;
+					return FSMState.GREEN_LIGHT_STATE;
 				}
 
-			case OTHER_STATE:
-				return FSMState.OTHER_STATE;
+			case RED_LIGHT_STATE:
+				if (timer.get() > RED_LIGHT_TIME_SEC) {
+					timer.stop();
+					return FSMState.GREEN_LIGHT_STATE;
+				} else {
+					return FSMState.RED_LIGHT_STATE;
+				}
 
 			default:
 				throw new IllegalStateException("Invalid state: " + currentState.toString());
@@ -122,43 +152,40 @@ public class TrafficLightSystem {
 
 	/* ------------------------ FSM state handlers ------------------------ */
 	/**
-	 * Handle behavior in START_STATE.
+	 * Handle behavior in GREEN_LIGHT_STATE.
 	 * @param input Global TeleopInput if robot in teleop mode or null if
 	 *        the robot is in autonomous mode.
 	 */
-	private void handleStartState(TeleopInput input) {
-		
+	private void handleGreenLightState(TeleopInput input) {
+		// Turn off all lights
+		fillColor(Color.kBlack);
+
+		// Turn on green light
+		ledBuffer.setLED(HardwareMap.LEDStripIndex.GREEN_LIGHT, Color.kGreen);
+		ledStrip.setData(ledBuffer);
 	}
 	/**
-	 * Handle behavior in OTHER_STATE.
+	 * Handle behavior in RED_LIGHT_STATE.
 	 * @param input Global TeleopInput if robot in teleop mode or null if
 	 *        the robot is in autonomous mode.
 	 */
-	private void handleOtherState(TeleopInput input) {
+	private void handleRedLightState(TeleopInput input) {
+		// Turn off all lights
+		fillColor(Color.kBlack);
 
+		// Turn on red light
+		ledBuffer.setLED(HardwareMap.LEDStripIndex.RED_LIGHT, Color.kRed);
+		ledStrip.setData(ledBuffer);
 	}
 
+	/* ------------------------ LED Helpers ------------------------ */
 	/**
-	 * Performs action for auto STATE1.
-	 * @return if the action carried out has finished executing
+	 * Set color of all LEDs
+	 * @param color Color to set LEDs to
 	 */
-	private boolean handleAutoState1() {
-		return true;
-	}
-
-	/**
-	 * Performs action for auto STATE2.
-	 * @return if the action carried out has finished executing
-	 */
-	private boolean handleAutoState2() {
-		return true;
-	}
-
-	/**
-	 * Performs action for auto STATE3.
-	 * @return if the action carried out has finished executing
-	 */
-	private boolean handleAutoState3() {
-		return true;
+	private void fillColor(Color color) {
+		for (int i = 0; i < ledBuffer.getLength(); i++) {
+			ledBuffer.setLED(i, color);
+		}
 	}
 }

@@ -1,5 +1,6 @@
 # WPILib Specific Files
 simgui*
+networktables.json
 
 # Created by https://www.gitignore.io/api/c++,java,linux,macos,gradle,windows,visualstudiocode
 
