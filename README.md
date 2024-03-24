@@ -16,6 +16,18 @@ The goal of this exercise is to create a basic traffic light including a crosswa
 
 Some skeleton code has been written for you in `TrafficLightSystem.java`. Right now only two states are implemented, one representing a red light and one representing a green light. When the button is pressed, the light switches to red for five seconds before reverting to green light.
 
+```mermaid
+---
+title: Starting State Diagram
+---
+stateDiagram-v2
+  state "Green Light" as GREEN_LIGHT_STATE
+  state "Red Light" as RED_LIGHT_STATE
+  [*] --> GREEN_LIGHT_STATE
+  GREEN_LIGHT_STATE --> RED_LIGHT_STATE: Button pressed
+  RED_LIGHT_STATE --> GREEN_LIGHT_STATE: Timer > 5 seconds
+```
+
 ## Hardware Definition
 
 The hardware definitions have already been completed for you in `HardwareMap.java`. Notice that we have a button connected to a digital input that will represent the crosswalk request button. This is a normally open button, so the input will read high (true) when the button is not preseed, and low (false) when the button is pressed. All of the lights in the traffic light are wired as a signal addressable LED strip. The LED strip is controlled from a PWM port on the RoboRIO. Please open up `HardwareMap.java` and verify your button and addressable LED strip connections match the values defined in our code.
