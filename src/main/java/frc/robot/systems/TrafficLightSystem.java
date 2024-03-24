@@ -21,7 +21,7 @@ public class TrafficLightSystem {
 	}
 
 	// How long to keep the red light on before resetting to green
-	private double RED_LIGHT_TIME_SEC = 5.0;
+	private static final double RED_LIGHT_TIME_SEC = 5.0;
 
 	/* ======================== Private variables ======================== */
 	private FSMState currentState;
@@ -29,9 +29,11 @@ public class TrafficLightSystem {
 
 	// Hardware devices should be owned by one and only one system. They must
 	// be private to their owner system and may not be used elsewhere.
-	private DigitalInput crosswalkButton; // Normally open button. This means input is high when button is not pressed.
 	private AddressableLED ledStrip;
 	private AddressableLEDBuffer ledBuffer;
+
+	// Normally open button. This means input is high when button is not pressed.
+	private DigitalInput crosswalkButton;
 
 	/* ======================== Constructor ======================== */
 	/**
@@ -185,7 +187,7 @@ public class TrafficLightSystem {
 
 	/* ------------------------ LED Helpers ------------------------ */
 	/**
-	 * Set color of all LEDs
+	 * Set color of all LEDs.
 	 * @param color Color to set LEDs to
 	 */
 	private void fillColor(Color color) {
