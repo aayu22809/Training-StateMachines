@@ -30,8 +30,6 @@ public class AutoHandlerSystem {
 	 * Create FSMSystem and initialize to starting state.
 	 * Initializes any subsystems such as driveFSM, armFSM, ect.
 	 * @param fsm1 the first subsystem that the auto handler will call functions on
-	 * @param fsm2 the second subsystem that the auto handler will call functions on
-	 * @param fsm3 the third subsystem that the auto handler will call functions on
 	 */
 	public AutoHandlerSystem(TrafficLightSystem fsm1) {
 		subsystem1 = fsm1;
