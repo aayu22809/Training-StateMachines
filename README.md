@@ -41,4 +41,23 @@ After cloning the repo, open the project in VSCode and run the "WPILib: Simulate
 
 You should see the Simulation GUI appear. Under the "Hardware" menu, make sure the "Addressable LED" and "DIO" panels are open. These will let you see the state of the LED's and simulate a button press in the simulator.
 
+![Simulation Panels](/doc/SimulationPanels.png)
+
+
 Switch the "Robot State" to "Teleoperated" to start running the teleop code. You should see the green light turn on in the Addressable LED panel. Next, click on the dropdown in the DIO panel to change the state of the input to `0 (low)` briefly, before switching it back to `1 (high)`. This simulates presing the button. Notice how the addressable LED light immediately switches to red. Make sure you un-press the button by switching the input back to `1 (high)`. Five seconds after the button was pressed, you should see the LED change back to green.
+
+## Debugging with SmartDashboard and AdvantageScope
+
+You may have noticed that the `update()` function for the `TrafficLightSystem` includes some calls to SmartDashboard. [SmartDashboard](https://docs.wpilib.org/en/stable/docs/software/dashboards/smartdashboard/displaying-expressions.html) is a simple way to publish values from your code that can be displayed on the driver station for much easier debugging than sprinkling `println()` calls across your code.
+
+SmartDashboard provides a set of API like `putString`, `putBoolean`, and `putNumber` that each take in a String key to label the value with and the value to save to the log. You can see in the `update()` function we are currently logging the current state of the `TrafficLightSystem` as well as the value of the button.
+
+Let's see this in action. [AdvantageScope](https://docs.wpilib.org/en/stable/docs/software/dashboards/advantagescope.html) is the new debugging dashboard provided as part of WPILib. You can open it by running `WPILib: Start Tool` from the command pallete in VSCode, then selecting `AdvantageScope`. In AdvantageScope, select File->Connect to Simulator, then launch the simulator from VSCode.
+
+![AdvantageScope Graph View](/doc/AdvantageScopeWindow.png)
+
+Once the simulation has started, you should see a set of values appear in the left sidebar of the AdvantageScope window. Under SmartDashboard, you should be able to see the two values we published from our `update()` function. Drag these from the left sidebar into the "Discrete Fields" section of the graph.
+
+Next, switch the simulation to teleop and press the button a few times. Notice how in AdvantageScope we can see the values update in real time, as well as the internal state of our `TrafficLightSystem`. Try using double click in the timeline view to measure how long we are staying in `RED_LIGHT_STATE`.
+
+AdvantageScope and SmartDashboard provide a very powerful way to visualize the robot's behavior in real time. For this exercise, let's only using SmartDashboard for debugging. Do not add any `println` in your code.
