@@ -7,7 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 
 // Systems
-import frc.robot.systems.TrafficLightSystem;
+import frc.robot.systems.TrafficLightSystem2;
 import frc.robot.systems.AutoHandlerSystem;
 import frc.robot.systems.AutoHandlerSystem.AutoPath;
 
@@ -20,7 +20,7 @@ public class Robot extends TimedRobot {
 	private AutoHandlerSystem autoHandler;
 
 	// Systems
-	private TrafficLightSystem trafficLightSystem;
+	private TrafficLightSystem2 trafficLightSystem;
 
 	/**
 	 * This function is run when the robot is first started up and should be used for any
@@ -32,7 +32,7 @@ public class Robot extends TimedRobot {
 		input = new TeleopInput();
 
 		// Instantiate all systems here
-		trafficLightSystem = new TrafficLightSystem();
+		trafficLightSystem = new TrafficLightSystem2();
 		autoHandler = new AutoHandlerSystem(trafficLightSystem);
 	}
 

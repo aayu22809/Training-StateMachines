@@ -18,7 +18,7 @@ public class AutoHandlerSystem {
 	private int currentStateIndex;
 
 	//FSM Systems that the autoHandlerFSM uses
-	private TrafficLightSystem subsystem1;
+	private TrafficLightSystem2 subsystem1;
 
 	//Predefined auto paths
 	private static final AutoFSMState[] PATH1 = new AutoFSMState[]{
@@ -31,7 +31,7 @@ public class AutoHandlerSystem {
 	 * Initializes any subsystems such as driveFSM, armFSM, ect.
 	 * @param fsm1 the first subsystem that the auto handler will call functions on
 	 */
-	public AutoHandlerSystem(TrafficLightSystem fsm1) {
+	public AutoHandlerSystem(TrafficLightSystem2 fsm1) {
 		subsystem1 = fsm1;
 	}
 

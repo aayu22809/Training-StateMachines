@@ -15,15 +15,34 @@ Copy in your the state diagram from Exercise 1, then add in the appropriate stat
 
 ```mermaid
 ---
-title: (EDIT ME) Traffic Light with Crosswalk State Diagram
+title: (EDIT ME) Traffic Light State Diagram
 ---
 stateDiagram-v2
-  state "Green Light" as GREEN_LIGHT_STATE
-  state "Red Light" as RED_LIGHT_STATE
+  state "Green Light" as VEHICLES_GREEN
+  state "Red Light" as VEHICLES_RED
+  state "Yellow Light" as 
+  VEHICLES_YELLOW
+  state "Dont Walk" as
+  PEDESTRIAN_HALT
+  state "Walk" as
+  PEDESTRIAN_WALK
+  state "Pedestrian Change Interval" as 
+  PEDESTRIAN_FLASH
 
-  [*] --> GREEN_LIGHT_STATE
-  GREEN_LIGHT_STATE --> RED_LIGHT_STATE: Button pressed
-  RED_LIGHT_STATE --> GREEN_LIGHT_STATE: Timer > 5 seconds
+  [*] --> VEHICLES_GREEN
+  VEHICLES_GREEN --> VEHICLES_YELLOW: Button pressed
+  VEHICLES_YELLOW --> VEHICLES_RED: Timer > 3 seconds
+  VEHICLES_RED --> VEHICLES_GREEN: Timer > 11 seconds
+
+  PEDESTRIAN_HALT --> PEDESTRIAN_WALK
+  PEDESTRIAN_WALK --> PEDESTRIAN_FLASH: Timer > 3
+  PEDESTRIAN_FLASH --> PEDESTRIAN_HALT: Timer > 8
+
+  VEHICLES_GREEN --> PEDESTRIAN_HALT: While green light is on
+  VEHICLES_YELLOW --> PEDESTRIAN_HALT: While yellow light is on
+  VEHICLES_RED --> PEDESTRIAN_WALK
+
+
 ```
 
 ## Implementation

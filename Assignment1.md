@@ -16,9 +16,12 @@ title: (EDIT ME) Traffic Light State Diagram
 stateDiagram-v2
   state "Green Light" as GREEN_LIGHT_STATE
   state "Red Light" as RED_LIGHT_STATE
+  state "Yellow Light" as 
+  YELLOW_LIGHT_STATE
 
   [*] --> GREEN_LIGHT_STATE
-  GREEN_LIGHT_STATE --> RED_LIGHT_STATE: Button pressed
+  GREEN_LIGHT_STATE --> YELLOW_LIGHT_STATE: Button pressed
+  YELLOW_LIGHT_STATE --> RED_LIGHT_STATE: Timer > 3 seconds
   RED_LIGHT_STATE --> GREEN_LIGHT_STATE: Timer > 5 seconds
 ```
 

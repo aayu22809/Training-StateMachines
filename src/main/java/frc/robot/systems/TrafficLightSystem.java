@@ -12,16 +12,28 @@ import frc.robot.TeleopInput;
 import frc.robot.HardwareMap;
 import frc.robot.systems.AutoHandlerSystem.AutoFSMState;
 
+/**
+ * 
+ * TrafficLightSystem is a finite state machine that controls the traffic light
+ * system. The system has two parallel state machines in one loop: VEHICLE_GREEN, VEHICLE_YELLOW and VEHICLE_RED; PEDESTRIAN_HALT, PEDESTRIAN_WALK, PEDESTRIAN_CHANGE. The system
+ * transitions between these states based on the state of the crosswalk button.
+ * The system also has a timer that tracks how long the vehice lights and crosswalk lights have been on
+ * and transitions states based on set time intervals.
+ */
+
+
 public class TrafficLightSystem {
 	/* ======================== Constants ======================== */
 	// FSM state definitions
 	public enum FSMState {
-		GREEN_LIGHT_STATE,
-		RED_LIGHT_STATE
+		GREEN,
+		YELLOW,
+		RED
 	}
 
 	// How long to keep the red light on before resetting to green
-	private static final double RED_LIGHT_TIME_SEC = 5.0;
+	private static final double YELLOW_LIGHT_TIME_SEC = 3.0;
+	private static final double RED_LIGHT_TIME_SEC = 11.0;
 
 	/* ======================== Private variables ======================== */
 	private FSMState currentState;
@@ -74,7 +86,7 @@ public class TrafficLightSystem {
 	 * Ex. if the robot is enabled, disabled, then reenabled.
 	 */
 	public void reset() {
-		currentState = FSMState.GREEN_LIGHT_STATE;
+		currentState = FSMState.GREEN;
 
 		timer.stop();
 		timer.reset();
@@ -91,13 +103,17 @@ public class TrafficLightSystem {
 	 */
 	public void update(TeleopInput input) {
 		switch (currentState) {
-			case GREEN_LIGHT_STATE:
+			case GREEN:
 				handleGreenLightState(input);
 				break;
 
-			case RED_LIGHT_STATE:
+			case RED:
 				handleRedLightState(input);
 				break;
+
+			case YELLOW:
+			handleYellowLightState(input);
+			break;
 
 			default:
 				throw new IllegalStateException("Invalid state: " + currentState.toString());
@@ -133,25 +149,37 @@ public class TrafficLightSystem {
 	private FSMState nextState(TeleopInput input) {
 		// Stay in start state until input is available
 		if (input == null) {
-			return FSMState.GREEN_LIGHT_STATE;
+			return FSMState.GREEN;
 		}
 		switch (currentState) {
-			case GREEN_LIGHT_STATE:
+			case GREEN:
 				if (!crosswalkButton.get()) {
 					// Start timer tracking how long red light is on
 					timer.restart();
-					return FSMState.RED_LIGHT_STATE;
+					return FSMState.YELLOW;
 				} else {
-					return FSMState.GREEN_LIGHT_STATE;
+					return FSMState.GREEN;
 				}
 
-			case RED_LIGHT_STATE:
-				if (timer.get() > RED_LIGHT_TIME_SEC) {
-					timer.stop();
-					return FSMState.GREEN_LIGHT_STATE;
+			case YELLOW:
+				if (timer.get() > YELLOW_LIGHT_TIME_SEC) {
+					timer.restart();
+					return FSMState.RED;
 				} else {
-					return FSMState.RED_LIGHT_STATE;
+					return FSMState.YELLOW;
+				}	
+			case RED:
+				if (timer.get() > RED_LIGHT_TIME_SEC) {
+					timer.restart();
+					return FSMState.GREEN;
+				} else if (timer.get() > 3) {
+					handlePedestrianChangeState(input);
+					return FSMState.RED;
+				} else {
+					handlePedestrianWalkState(input);
+					return FSMState.RED;
 				}
+			
 
 			default:
 				throw new IllegalStateException("Invalid state: " + currentState.toString());
@@ -160,7 +188,7 @@ public class TrafficLightSystem {
 
 	/* ------------------------ FSM state handlers ------------------------ */
 	/**
-	 * Handle behavior in GREEN_LIGHT_STATE.
+	 * Handle behavior in GREEN.
 	 * @param input Global TeleopInput if robot in teleop mode or null if
 	 *        the robot is in autonomous mode.
 	 */
@@ -173,7 +201,7 @@ public class TrafficLightSystem {
 		ledStrip.setData(ledBuffer);
 	}
 	/**
-	 * Handle behavior in RED_LIGHT_STATE.
+	 * Handle behavior in RED.
 	 * @param input Global TeleopInput if robot in teleop mode or null if
 	 *        the robot is in autonomous mode.
 	 */
@@ -186,6 +214,49 @@ public class TrafficLightSystem {
 		ledStrip.setData(ledBuffer);
 	}
 
+	private void handleYellowLightState(TeleopInput input) {
+		// Turn off all lights
+		fillColor(Color.kBlack);
+
+		// Turn on red light
+		ledBuffer.setLED(HardwareMap.LEDStripIndex.YELLOW_LIGHT, Color.kYellow);
+		ledStrip.setData(ledBuffer);
+	}
+	
+	private void handlePedestrianWalkState(TeleopInput input) {
+		// Turn off all lights
+		ledBuffer.setLED(HardwareMap.LEDStripIndex.HAND_SIGN, Color.kBlack);
+
+		//Turn on walk light
+		ledBuffer.setLED(HardwareMap.LEDStripIndex.WALK_SIGN, Color.kWhite);
+		ledStrip.setData(ledBuffer);
+
+	}
+
+	private void handlePedestrianHaltState(TeleopInput input) {
+		// Turn off all lights
+		ledBuffer.setLED(HardwareMap.LEDStripIndex.WALK_SIGN, Color.kBlack);
+		
+		// Turn on hand sign
+		ledBuffer.setLED(HardwareMap.LEDStripIndex.HAND_SIGN, Color.kOrange);
+		ledStrip.setData(ledBuffer);
+	}
+
+	private void handlePedestrianChangeState(TeleopInput input) {
+		// Turn off all lights
+		ledBuffer.setLED(HardwareMap.LEDStripIndex.WALK_SIGN, Color.kBlack);
+		
+		// Turn on hand sign
+		for (int i=0; i < 4; i++) {
+			ledBuffer.setLED(HardwareMap.LEDStripIndex.HAND_SIGN, Color.kOrange);
+			ledStrip.setData(ledBuffer);
+			wait(1000);
+			ledBuffer.setLED(HardwareMap.LEDStripIndex.HAND_SIGN, Color.kBlack);
+			ledStrip.setData(ledBuffer);
+			wait(1000);
+		}
+	}
+
 	/* ------------------------ LED Helpers ------------------------ */
 	/**
 	 * Set color of all LEDs.
@@ -196,4 +267,14 @@ public class TrafficLightSystem {
 			ledBuffer.setLED(i, color);
 		}
 	}
+
+	private void wait(int time) {
+		try {
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
 }
+
